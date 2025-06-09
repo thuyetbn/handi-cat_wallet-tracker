@@ -14,6 +14,8 @@ import { PrismaUserRepository } from '../repositories/prisma/user'
 import { WalletPool } from '../config/wallet-pool'
 import TelegramBot from 'node-telegram-bot-api'
 
+const MIN_SOL_NOTIFICATION = Number(process.env.MIN_SOL_NOTIFICATION ?? 0)
+
 export class WatchTransaction extends EventEmitter {
   private walletTransactions: Map<string, { count: number; startTime: number }>
 
@@ -117,9 +119,20 @@ export class WatchTransaction extends EventEmitter {
               if (!parsed) {
                 return
               }
+
+              let solAmount = 0
+              if (parsed.tokenTransfers.tokenInSymbol === 'SOL') {
+                solAmount = parseFloat(parsed.tokenTransfers.tokenAmountIn)
+              } else if (parsed.tokenTransfers.tokenOutSymbol === 'SOL') {
+                solAmount = parseFloat(parsed.tokenTransfers.tokenAmountOut)
+              }
+
+              if (solAmount < MIN_SOL_NOTIFICATION) {
+                return
+              }
+
               console.log(parsed.description)
 
-              // await this.sendTransactionMessageToUsers(wallet, parsed)S
               await this.sendMessageToUsers(wallet, parsed, (handler, parsedData, userId) =>
                 handler.sendTransactionMessage(parsedData, userId),
               )
@@ -128,9 +141,12 @@ export class WatchTransaction extends EventEmitter {
               if (!parsed) {
                 return
               }
+              if (parsed.solAmount < MIN_SOL_NOTIFICATION) {
+                return
+              }
+
               console.log(parsed.description)
 
-              // await this.sendTransferMessageToUsers(wallet, parsed)
               await this.sendMessageToUsers(wallet, parsed, (handler, parsedData, userId) =>
                 handler.sendTransferMessage(parsedData, userId),
               )
