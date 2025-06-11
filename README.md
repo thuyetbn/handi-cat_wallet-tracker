@@ -101,13 +101,15 @@ Follow these simple steps to setup Handi Cat locally on your machine
 
 8. (Optional) setup a custom RPC provider inside of `RPC_ENDPOINTS` environment variable, you can place as many endpoints as you want if you folow them up with a comma. `e.g: https://rpc1.com,https://rpc2.com`
 
-9. Start the bot
+9. (Optional) set `MIN_SOL_NOTIFICATION` to configure the minimum SOL amount required before a transfer notification is sent
+
+10. Start the bot
 
 ```sh
   pnpm start
 ```
 
-10. That's it! now your local version of Handi Cat is ready to use.
+11. That's it! now your local version of Handi Cat is ready to use.
 
 <p align="center"><img src="./showcase/cli-pic.png" width="95%" alt="Screenshot of bot succesfully running"/></>
 
